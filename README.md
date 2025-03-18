@@ -23,4 +23,10 @@
 - Pause function
 - Gravity adjustment slider
 
-###
+### _0.2.0 (Flant Update)_
+
+- Script language to set setting parameters in the application and add planets
+
+**_further along 0.2.x_**
+
+- Syntax optimization for Flant
