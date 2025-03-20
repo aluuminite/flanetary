@@ -1,5 +1,6 @@
+# main.py
 import pygame
-from settings import SCREEN_WIDTH, SCREEN_HEIGHT, FPS, BLACK, WHITE
+from settings import SCREEN_WIDTH, SCREEN_HEIGHT, FPS, BLACK, WHITE, TIME_STEP
 from planet import Planet
 from physics import apply_gravity, resolve_collision
 from utils import check_collision
@@ -17,10 +18,8 @@ start_ticks = pygame.time.get_ticks()  # Get the current time in milliseconds
 
 # Define some planets for testing
 planets = [
-    Planet(200, 300, 10, (0, 0, 255)),  # 10 x 10¹² tons
-    Planet(600, 300, 20, (255, 0, 0)),  # 20 x 10¹² tons
     Planet(400, 150, 15, (0, 255, 0)),  # 15 x 10¹² tons
-    Planet(300, 90, 40, (255, 255, 0))  # 25 x 10¹² tons
+    Planet(410, 200, 15, (255, 255, 0))  # 25 x 10¹² tons
 ]
 
 running = True
@@ -40,7 +39,7 @@ while running:
     for i, p1 in enumerate(planets):
         for j, p2 in enumerate(planets):
             if i != j:
-                apply_gravity(p1, p2)
+                apply_gravity(p1, p2, TIME_STEP)
 
     # Update planets' positions
     for planet in planets:
