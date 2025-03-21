@@ -1,6 +1,6 @@
 # main.py
 import pygame
-from settings import SCREEN_WIDTH, SCREEN_HEIGHT, FPS, BLACK, WHITE, TIME_STEP
+from settings import SCREEN_WIDTH, SCREEN_HEIGHT, FPS, COLOR, TIME_STEP
 from planet import Planet
 from physics import apply_gravity, resolve_collision
 from utils import check_collision
@@ -46,7 +46,7 @@ while running:
         planet.update()
 
     # Clear screen and draw planets
-    screen.fill(BLACK)
+    screen.fill(COLOR)
     for planet in planets:
         planet.draw(screen, font)  # Pass the font to the draw function
 
