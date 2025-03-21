@@ -9,3 +9,6 @@ COLOR = (0, 0, 0)
 
 # Gravity Accuracy
 TIME_STEP = 0.5
+
+# Globally toggles all logs
+LOG_TOGGLE = True  # Set to False to disable all logging
