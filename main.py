@@ -1,6 +1,8 @@
 # main.py
 import pygame
-from settings import SCREEN_WIDTH, SCREEN_HEIGHT, FPS, COLOR, TIME_STEP
+
+from flanetary.settings import LOG_TOGGLE
+from settings import SCREEN_WIDTH, SCREEN_HEIGHT, FPS, COLOR, TIME_STEP, WHITE
 from planet import Planet
 from physics import apply_gravity, resolve_collision
 from utils import check_collision
@@ -19,7 +21,8 @@ start_ticks = pygame.time.get_ticks()  # Get the current time in milliseconds
 # Define some planets for testing
 planets = [
     Planet(400, 150, 15, (0, 255, 0)),  # 15 x 10¹² tons
-    Planet(410, 200, 15, (255, 255, 0))  # 25 x 10¹² tons
+    Planet(410, 200, 15, (255, 255, 0)),  # 25 x 10¹² tons
+    Planet(670, 500, 30, (69, 255, 69))
 ]
 
 running = True
@@ -32,7 +35,8 @@ while running:
     for i, p1 in enumerate(planets):
         for j, p2 in enumerate(planets):
             if i < j and check_collision(p1, p2):
-                print(f"Collision detected between planet {i} and planet {j}!")
+                if LOG_TOGGLE:
+                    print(f"Collision detected between planet {i} and planet {j}!")
                 resolve_collision(p1, p2)
 
     # Apply gravity between planets

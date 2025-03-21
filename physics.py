@@ -1,4 +1,5 @@
 from flanetary.planet import MASS_UNIT
+from flanetary.settings import LOG_TOGGLE
 from settings import G
 from utils import distance, normalize_vector
 import time  # For collision tracking
@@ -35,10 +36,11 @@ def apply_gravity(p1, p2, time_step):
     p2.vy -= (fy / p2.mass) * time_step
 
     # Log gravity application
-    print(f"Gravity applied:")
-    print(f"  Force: ({fx:.6f}, {fy:.6f})")
-    print(f"  Planet 1 velocity: ({p1.vx:.6f}, {p1.vy:.6f})")
-    print(f"  Planet 2 velocity: ({p2.vx:.6f}, {p2.vy:.6f})\n")
+    if LOG_TOGGLE:
+        print(f"Gravity applied:")
+        print(f"  Force: ({fx:.6f}, {fy:.6f})")
+        print(f"  Planet 1 velocity: ({p1.vx:.6f}, {p1.vy:.6f})")
+        print(f"  Planet 2 velocity: ({p2.vx:.6f}, {p2.vy:.6f})\n")
 
 
 def resolve_collision(p1, p2):
@@ -84,10 +86,11 @@ def resolve_collision(p1, p2):
     p2.vy -= (impulse * ny) / p2.mass
 
     # Log kinetic energy before and after impact
-    print(f"Collision between planets:")
-    print(f"  Planet 1: KE before = {ke1_before / KE_CONVERSION:.6f} TJ, KE after = {ke1_after / KE_CONVERSION:.6f} TJ")
-    print(f"  Planet 2: KE before = {ke2_before / KE_CONVERSION:.6f} TJ, KE after = {ke2_after / KE_CONVERSION:.6f} TJ")
-    print(f"  Total KE: before = {total_ke_before / KE_CONVERSION:.6f} TJ, after = {total_ke_after / KE_CONVERSION:.6f} TJ\n")
+    if LOG_TOGGLE:
+        print(f"Collision between planets:")
+        print(f"  Planet 1: KE before = {ke1_before / KE_CONVERSION:.6f} TJ, KE after = {ke1_after / KE_CONVERSION:.6f} TJ")
+        print(f"  Planet 2: KE before = {ke2_before / KE_CONVERSION:.6f} TJ, KE after = {ke2_after / KE_CONVERSION:.6f} TJ")
+        print(f"  Total KE: before = {total_ke_before / KE_CONVERSION:.6f} TJ, after = {total_ke_after / KE_CONVERSION:.6f} TJ\n")
 
     if impact_speed > 0:
         return  # No collision response needed if already moving apart
