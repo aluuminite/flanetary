@@ -8,7 +8,5 @@ SCALE = 0.001  # 1 meter = 0.001 pixels (or 1 km = 1 pixel)
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 
-# Gravitational constant (simplified for simulation purposes)
-G = 0.1
-
+# Gravity Accuracy
 TIME_STEP = 0.5
