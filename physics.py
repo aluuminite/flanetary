@@ -1,11 +1,10 @@
 from flanetary.planet import MASS_UNIT
 from settings import G
 from utils import distance, normalize_vector
-import time  # For collision cooldown tracking
+import time  # For collision tracking
 
 # Convert KE to terajoules (TJ)
-KE_CONVERSION = 10**12
-COLLISION_COOLDOWN = 0.1  # Gravity deactivation period after collision
+KE_CONVERSION = 10**12  # Conversion factor for kinetic energy
 
 # Function to calculate the full gravitational force between two planets
 def calculate_gravity(p1, p2):
@@ -27,17 +26,6 @@ def calculate_gravity(p1, p2):
 
 
 def apply_gravity(p1, p2, time_step):
-    current_time = time.time()
-
-    # Check if gravity should be skipped due to recent collision
-    if (
-        hasattr(p1, "last_collision_time") and current_time - p1.last_collision_time < COLLISION_COOLDOWN
-    ) or (
-        hasattr(p2, "last_collision_time") and current_time - p2.last_collision_time < COLLISION_COOLDOWN
-    ):
-        print(f"[{current_time:.3f}] Gravity skipped for {p1} and {p2} due to recent collision.")
-        return
-
     fx, fy = calculate_gravity(p1, p2)
 
     # Apply force as acceleration (F = ma)
@@ -47,7 +35,7 @@ def apply_gravity(p1, p2, time_step):
     p2.vy -= (fy / p2.mass) * time_step
 
     # Log gravity application
-    print(f"[{current_time:.3f}] Gravity applied:")
+    print(f"Gravity applied:")
     print(f"  Force: ({fx:.6f}, {fy:.6f})")
     print(f"  Planet 1 velocity: ({p1.vx:.6f}, {p1.vy:.6f})")
     print(f"  Planet 2 velocity: ({p2.vx:.6f}, {p2.vy:.6f})\n")
@@ -94,11 +82,6 @@ def resolve_collision(p1, p2):
     p1.vy += (impulse * ny) / p1.mass
     p2.vx -= (impulse * nx) / p2.mass
     p2.vy -= (impulse * ny) / p2.mass
-
-    # Set last collision time to disable gravity temporarily
-    p1.last_collision_time = time.time()
-    p2.last_collision_time = time.time()
-    print(" susndnduibed")
 
     # Log kinetic energy before and after impact
     print(f"Collision between planets:")
