@@ -1,3 +1,4 @@
+# main.py
 import pygame
 import psutil
 import settings
@@ -33,6 +34,9 @@ planets = [
 
 paused = False  # Pause state
 
+# Initial color
+bg_color = list(COLOR)  # Convert tuple to list for easier modification
+
 running = True
 while running:
     for event in pygame.event.get():
@@ -45,8 +49,19 @@ while running:
                     pause_start_ticks = pygame.time.get_ticks()  # Start tracking pause time
                     print("Simulation Paused")
                 else:
-                    paused_time += pygame.time.get_ticks() - pause_start_ticks  # Accumulate paused time
+                    # Update paused time and calculate total elapsed time when resumed
+                    paused_time += pygame.time.get_ticks() - pause_start_ticks
                     print("Simulation Resumed")
+            # Adjust the background color using hotkeys
+            if event.key == pygame.K_r:  # Increase red value
+                bg_color[0] = min(bg_color[0] + 10, 255)  # Clamp to 255
+                print(f"Updated background color: {bg_color}")
+            elif event.key == pygame.K_g:  # Increase green value
+                bg_color[1] = min(bg_color[1] + 10, 255)  # Clamp to 255
+                print(f"Updated background color: {bg_color}")
+            elif event.key == pygame.K_b:  # Increase blue value
+                bg_color[2] = min(bg_color[2] + 10, 255)  # Clamp to 255
+                print(f"Updated background color: {bg_color}")
 
     if not paused:
         # Check collisions and resolve them
@@ -68,14 +83,15 @@ while running:
             planet.update()
 
     # Clear screen and draw planets
-    screen.fill(COLOR)
+    screen.fill(bg_color)  # Use the dynamically updated background color
     for planet in planets:
         planet.draw(screen, font)  # Pass the font to the draw function
 
-    # Render timer text (Elapsed time, adjusted for pause)
-    elapsed_time = (pygame.time.get_ticks() - start_ticks - paused_time) / 1000
-    timer_text = font.render(f"Time: {elapsed_time:.2f}s", True, WHITE)
-    screen.blit(timer_text, (SCREEN_WIDTH - 100, 10))
+    # Render timer text (Elapsed time, adjusted for pause), only if not paused
+    if not paused:
+        elapsed_time = (pygame.time.get_ticks() - start_ticks - paused_time) / 1000
+        timer_text = font.render(f"Time: {elapsed_time:.2f}s", True, WHITE)
+        screen.blit(timer_text, (SCREEN_WIDTH - 100, 10))
 
     pygame.display.flip()
     clock.tick(FPS)
