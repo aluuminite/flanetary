@@ -4,7 +4,7 @@ import psutil
 import settings
 
 from parse import parse_build_file
-from settings import SCREEN_WIDTH, SCREEN_HEIGHT, FPS, SCALE, WHITE, COLOR, TIME_STEP, G, LOG_TOGGLE
+from settings import SCREEN_WIDTH, SCREEN_HEIGHT, FPS, SCALE, WHITE, COLOR, TIME_STEP, G, LOG_TOGGLE, RGB_TOGGLE
 from planet import Planet
 from physics import apply_gravity, resolve_collision
 from utils import check_collision
@@ -102,6 +102,11 @@ while running:
         elapsed_time = (pygame.time.get_ticks() - start_ticks - paused_time) / 1000
         timer_text = font.render(f"Time: {elapsed_time:.2f}s", True, WHITE)
         screen.blit(timer_text, (SCREEN_WIDTH - 100, 10))
+
+    # Display RGB values only if RGB_TOGGLE is True
+    if RGB_TOGGLE:
+        rgb_text = font.render(f"RGB: {bg_color[0]}, {bg_color[1]}, {bg_color[2]}", True, WHITE)
+        screen.blit(rgb_text, (10, 10))
 
     pygame.display.flip()
     clock.tick(FPS)
