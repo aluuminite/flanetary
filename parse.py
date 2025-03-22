@@ -109,6 +109,123 @@ def parse_build_file(file_path):
                 except Exception as e:
                     logging.error(f"Invalid random planet format: {line}. Error: {e}")
 
+
+            elif line.startswith("sr(") and line.endswith(")"):
+
+                # Seeded random planet generation (sr())
+                if planets:  # If planets have already been added with p(), skip random
+
+                    logging.error("Cannot use seeded random planet generation (sr()) with planets added using p().")
+                    continue
+
+                try:
+
+                    # Strip off 'sr(' and ')', then evaluate the content inside
+                    data = eval(line[3:-1])  # Extract the tuple part after "sr("
+
+                    if len(data) == 5:
+
+                        num_planets, random_velocity, max_mass, pos_seed, mass_seed = data
+
+                        if num_planets <= 0:
+                            logging.error(f"Invalid number of random seeded planets: {num_planets}. Must be positive.")
+                            continue
+
+                        for _ in range(num_planets):
+
+                            # Determine position based on pos_seed:
+                            if pos_seed == -1:
+
+                                # Regular generation (uniform distribution)
+                                x = random.randint(0, SCREEN_WIDTH)
+                                y = random.randint(0, SCREEN_HEIGHT)
+
+                            elif pos_seed == 0:
+
+                                # Majority near center using a Gaussian distribution
+                                x = int(random.gauss(SCREEN_WIDTH / 2, SCREEN_WIDTH / 8))
+                                y = int(random.gauss(SCREEN_HEIGHT / 2, SCREEN_HEIGHT / 8))
+                                x = max(0, min(SCREEN_WIDTH, x))
+                                y = max(0, min(SCREEN_HEIGHT, y))
+
+                            elif pos_seed == 1:
+
+                                # Majority near edge
+                                if random.random() < 0.5:
+                                    x = random.randint(0, SCREEN_WIDTH // 4)
+
+                                else:
+                                    x = random.randint(3 * SCREEN_WIDTH // 4, SCREEN_WIDTH)
+
+                                if random.random() < 0.5:
+                                    y = random.randint(0, SCREEN_HEIGHT // 4)
+
+                                else:
+                                    y = random.randint(3 * SCREEN_HEIGHT // 4, SCREEN_HEIGHT)
+
+                            else:
+
+                                # Fallback to regular generation if seed is unrecognized
+                                x = random.randint(0, SCREEN_WIDTH)
+                                y = random.randint(0, SCREEN_HEIGHT)
+
+                            # Determine mass based on mass_seed:
+                            if mass_seed == -1:
+
+                                # Regular generation
+                                mass = random.randint(10, max_mass)
+
+                            elif mass_seed == 0:
+
+                                # All planets have maximum mass
+                                mass = max_mass
+
+                            elif mass_seed == 1:
+
+                                # All planets have minimum mass (10)
+                                mass = 10
+
+                            elif mass_seed == 2:
+
+                                # Gaussian distribution for mass
+                                mean = (max_mass + 10) / 2
+                                sigma = (max_mass - 10) / 4
+                                mass = int(random.gauss(mean, sigma))
+                                mass = max(10, min(max_mass, mass))
+
+                            elif mass_seed == 3:
+
+                                # Opposite of Gaussian: invert the Gaussian value.
+                                mean = (max_mass + 10) / 2
+                                sigma = (max_mass - 10) / 4
+                                g = int(random.gauss(mean, sigma))
+                                mass = max_mass + 10 - g
+                                mass = max(10, min(max_mass, mass))
+
+                            else:
+                                mass = random.randint(10, max_mass)
+
+                            # Standard color generation:
+                            color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+
+                            # Velocity assignment:
+                            if random_velocity:
+                                vx = random.uniform(-0.3, 0.3)
+                                vy = random.uniform(-0.3, 0.3)
+
+                            else:
+                                vx = vy = 0
+
+                            planets.append(Planet(x, y, mass, color, vx, vy))
+                            logging.info(
+                                f"Added random seeded planet: (x={x}, y={y}, mass={mass}, velocity=({vx}, {vy}))")
+
+                    else:
+                        logging.error("Invalid parameters for sr() - must provide 5 parameters.")
+
+                except Exception as e:
+                    logging.error(f"Invalid random seeded planet format: {line}. Error: {e}")
+
         # Update settings.py with new values
         update_settings_file(new_settings)
 
@@ -116,6 +233,7 @@ def parse_build_file(file_path):
         logging.error(f"Error parsing file: {e}")
 
     return planets  # Return parsed planets list
+
 
 
 def update_settings_file(new_settings):
