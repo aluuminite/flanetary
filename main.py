@@ -54,13 +54,13 @@ while running:
                     print("Simulation Resumed")
             # Adjust the background color using hotkeys
             if event.key == pygame.K_r:  # Increase red value
-                bg_color[0] = min(bg_color[0] + 10, 255)  # Clamp to 255
+                bg_color[0] = (bg_color[0] + 10) % 256  # Reset to 0 if over 255
                 print(f"Updated background color: {bg_color}")
             elif event.key == pygame.K_g:  # Increase green value
-                bg_color[1] = min(bg_color[1] + 10, 255)  # Clamp to 255
+                bg_color[1] = (bg_color[1] + 10) % 256  # Reset to 0 if over 255
                 print(f"Updated background color: {bg_color}")
             elif event.key == pygame.K_b:  # Increase blue value
-                bg_color[2] = min(bg_color[2] + 10, 255)  # Clamp to 255
+                bg_color[2] = (bg_color[2] + 10) % 256  # Reset to 0 if over 255
                 print(f"Updated background color: {bg_color}")
 
     if not paused:
