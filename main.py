@@ -63,6 +63,16 @@ while running:
                 bg_color[2] = (bg_color[2] + 10) % 256  # Reset to 0 if over 255
                 print(f"Updated background color: {bg_color}")
 
+            # Increase all color values by 10 when W is pressed
+            elif event.key == pygame.K_w:
+                bg_color = [(c + 10) % 256 for c in bg_color]
+                print(f"Updated background color by 10 to: {bg_color}")
+
+            # Reset all color values to 0 when 0 key is pressed (Black background)
+            elif event.key == pygame.K_0:
+                bg_color = [0, 0, 0]
+                print(f"Reset background color to black: {bg_color}")
+
     if not paused:
         # Check collisions and resolve them
         for i, p1 in enumerate(planets):
