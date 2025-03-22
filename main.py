@@ -1,4 +1,3 @@
-# main.py
 import pygame
 import psutil
 import settings
@@ -9,8 +8,8 @@ from planet import Planet
 from physics import apply_gravity, resolve_collision
 from utils import check_collision
 
-# Parse the build.txt file and update settings
-parse_build_file("build.txt")
+# Parse the build.txt file and retrieve planet data
+planets_data = parse_build_file("build.txt")
 
 pygame.init()
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -25,12 +24,9 @@ start_ticks = pygame.time.get_ticks()  # Get the current time in milliseconds
 paused_time = 0  # Track total time spent in pause mode
 pause_start_ticks = None  # Track when pause started
 
-# Define some planets for testing
-planets = [
-    Planet(400, 150, 15, (0, 255, 0), 0.1, 0.1),  # 15 x 10¹² tons
-    Planet(410, 200, 15, (255, 255, 0), 0.2, 0.1),  # 25 x 10¹² tons
-    Planet(570, 300, 30, (69, 255, 69), 0, 0.1)
-]
+# Initialize planets dynamically from the parsed build file
+planets = planets_data  # Simply use the already created Planet objects
+
 
 paused = False  # Pause state
 
@@ -52,6 +48,7 @@ while running:
                     # Update paused time and calculate total elapsed time when resumed
                     paused_time += pygame.time.get_ticks() - pause_start_ticks
                     print("Simulation Resumed")
+
             # Adjust the background color using hotkeys
             if event.key == pygame.K_r:  # Increase red value
                 bg_color[0] = (bg_color[0] + 10) % 256  # Reset to 0 if over 255

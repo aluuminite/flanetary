@@ -1,6 +1,7 @@
-# parse.py
 import os
 import logging
+from planet import Planet
+from settings import SCREEN_WIDTH, SCREEN_HEIGHT
 
 # Settings path
 SETTINGS_FILE = "settings.py"
@@ -9,13 +10,17 @@ SETTINGS_FILE = "settings.py"
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s - %(levelname)s - %(message)s')
 
-def parse_build_file(file_path):
+import random
 
+
+def parse_build_file(file_path):
     if not os.path.isfile(file_path):
         logging.error(f"{file_path} does not exist! Using default settings.")
-        return  # If the file doesn't exist, we keep defaults
+        return []
 
     new_settings = {}
+    planets = []
+    random_planets = False  # Flag to check if random planets are used
 
     try:
         with open(file_path, 'r') as file:
@@ -61,11 +66,57 @@ def parse_build_file(file_path):
                 except ValueError:
                     logging.error("Invalid rgb value in build.txt. Using default setting.")
 
+            elif line.startswith("p(") and line.endswith(")"):
+                # Planet data (p())
+                try:
+                    data = eval(line[1:])  # Extract the tuple part after "p"
+                    if len(data) == 6:
+                        x, y, mass, color, vx, vy = data
+                        planets.append(Planet(x, y, mass, color, vx, vy))
+                        logging.info(f"Added planet: {data}")
+                except Exception as e:
+                    logging.error(f"Invalid planet format: {line}. Error: {e}")
+
+            elif line.startswith("r(") and line.endswith(")"):
+                # Random planet generation (r())
+                if planets:  # If planets have already been added with p(), skip random
+                    logging.error("Cannot use random planet generation (r()) with planets added using p().")
+                    continue
+
+                try:
+                    data = eval(line[1:])  # Extract the tuple part after "r"
+                    if len(data) == 3:
+                        num_planets, random_velocity, max_mass = data
+                        if num_planets <= 0:
+                            logging.error(f"Invalid number of random planets: {num_planets}. Must be positive.")
+                            continue
+
+                        # Create random planets
+                        for _ in range(num_planets):
+                            x = random.randint(0, SCREEN_WIDTH)
+                            y = random.randint(0, SCREEN_HEIGHT)
+                            mass = random.randint(1, max_mass)  # Random mass for planets, constrained by max_mass
+                            color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+
+                            if random_velocity:
+                                vx = random.uniform(-0.3, 0.3)
+                                vy = random.uniform(-0.3, 0.3)
+                            else:
+                                vx = vy = 0
+
+                            planets.append(Planet(x, y, mass, color, vx, vy))
+                            logging.info(f"Added random planet: (x={x}, y={y}, mass={mass}, velocity=({vx}, {vy}))")
+                except Exception as e:
+                    logging.error(f"Invalid random planet format: {line}. Error: {e}")
+
         # Update settings.py with new values
         update_settings_file(new_settings)
 
     except Exception as e:
         logging.error(f"Error parsing file: {e}")
+
+    return planets  # Return parsed planets list
+
 
 def update_settings_file(new_settings):
     """Write updated settings into settings.py."""
