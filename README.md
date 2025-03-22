@@ -10,12 +10,6 @@
 - Mass Factor
 
 ## Roadmap
-
-**_further along 0.1.x_**
-
-- Bugfixes (potentially, probably)
-- Pause function
-
 ### _0.2.0 (Flant Update)_
 
 - Script language & built-in parser to set parameters with less characters
