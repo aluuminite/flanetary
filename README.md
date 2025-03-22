@@ -15,11 +15,10 @@
 
 - Bugfixes (potentially, probably)
 - Pause function
-- Collision Angles
 
 ### _0.2.0 (Flant Update)_
 
-- Script language to set setting parameters in the application and add planets
+- Script language & built-in parser to set parameters with less characters
 
 **_further along 0.2.x_**
 
