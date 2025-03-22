@@ -6,7 +6,8 @@ A physics-based 2D planetary simulator built with Python and Pygame. The simulat
 - **Realistic Gravity Simulation**: Planets attract each other based on Newtonian physics.
 - **Collisions**: Planets collide and bounce off each other with kinetic energy conservation.
 - **Customizable Settings**: Adjust parameters such as gravity, time step, and background color.
-- **Dynamic Planet Creation**: Planets can be defined in a `build.txt` file with fixed or highly customizable random properties
+- **Dynamic Planet Creation**: Planets can be defined in a `build.txt` file with fixed or highly customizable random properties.
+- **Flant**: Own custom scripting language for `build.txt` - check 0.2.0 release notes for documentation
 - **Keybinds for Interaction**:
   - `SPACE`: Pause/Resume simulation.
   - `I`: Send all planets toward the center.
