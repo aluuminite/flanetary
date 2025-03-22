@@ -1,16 +1,15 @@
-# main.py
 import pygame
 import psutil
 import settings
 
-#from parse import parse_build_file
+from parse import parse_build_file
 from settings import SCREEN_WIDTH, SCREEN_HEIGHT, FPS, SCALE, WHITE, COLOR, TIME_STEP, G, LOG_TOGGLE
 from planet import Planet
 from physics import apply_gravity, resolve_collision
 from utils import check_collision
 
 # Parse the build.txt file and update settings
-#parse_build_file("build.txt")
+parse_build_file("build.txt")
 
 pygame.init()
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -22,6 +21,8 @@ font = pygame.font.SysFont(None, 24)
 
 # Initialize the start_ticks variable for elapsed time calculation
 start_ticks = pygame.time.get_ticks()  # Get the current time in milliseconds
+paused_time = 0  # Track total time spent in pause mode
+pause_start_ticks = None  # Track when pause started
 
 # Define some planets for testing
 planets = [
@@ -40,7 +41,12 @@ while running:
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
                 paused = not paused
-                print("Simulation Paused" if paused else "Simulation Resumed")
+                if paused:
+                    pause_start_ticks = pygame.time.get_ticks()  # Start tracking pause time
+                    print("Simulation Paused")
+                else:
+                    paused_time += pygame.time.get_ticks() - pause_start_ticks  # Accumulate paused time
+                    print("Simulation Resumed")
 
     if not paused:
         # Check collisions and resolve them
@@ -66,8 +72,8 @@ while running:
     for planet in planets:
         planet.draw(screen, font)  # Pass the font to the draw function
 
-    # Render timer text (Elapsed time)
-    elapsed_time = (pygame.time.get_ticks() - start_ticks) / 1000
+    # Render timer text (Elapsed time, adjusted for pause)
+    elapsed_time = (pygame.time.get_ticks() - start_ticks - paused_time) / 1000
     timer_text = font.render(f"Time: {elapsed_time:.2f}s", True, WHITE)
     screen.blit(timer_text, (SCREEN_WIDTH - 100, 10))
 
