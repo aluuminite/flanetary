@@ -32,15 +32,15 @@ def apply_gravity(p1, p2, time_step):
         return  # Two black holes do not move
 
     if p1.black_hole:
-        # p1 is a black hole, apply gravity ONLY to p2
-        p2.vx += (fx / p2.mass) * time_step
-        p2.vy += (fy / p2.mass) * time_step
+        # Black hole attracts p2 (planet), so p2 must move toward p1
+        p2.vx -= (fx / p2.mass) * time_step  # Subtract force to pull in
+        p2.vy -= (fy / p2.mass) * time_step
     elif p2.black_hole:
-        # p2 is a black hole, apply gravity ONLY to p1
-        p1.vx -= (fx / p1.mass) * time_step
-        p1.vy -= (fy / p1.mass) * time_step
+        # Black hole attracts p1 (planet), so p1 must move toward p2
+        p1.vx += (fx / p1.mass) * time_step  # Add force to pull in
+        p1.vy += (fy / p1.mass) * time_step
     else:
-        # Normal gravity application if neither is a black hole
+        # Normal gravity (both attract each other)
         p1.vx += (fx / p1.mass) * time_step
         p1.vy += (fy / p1.mass) * time_step
         p2.vx -= (fx / p2.mass) * time_step
@@ -48,15 +48,15 @@ def apply_gravity(p1, p2, time_step):
 
 
 
-
-def resolve_collision(p1, p2):
+def resolve_collision(p1, p2, planets):
     if p1.black_hole and p2.black_hole:
         # No collision occurs between two black holes; both are immovable
+        if LOG_TOGGLE:
+            print("Collision between two black holes (no movement).")
         return
 
     if p1.black_hole:
         # If p1 is a black hole, it doesn't move, only p2 should be affected
-        # Resolve collision as if p1 is immovable
         dx = p2.x - p1.x
         dy = p2.y - p1.y
         distance_val = distance(p1, p2)
@@ -78,11 +78,17 @@ def resolve_collision(p1, p2):
         # Update the velocity of p2 based on gravity force
         p2.vx -= (fx / p2.mass) * TIME_STEP
         p2.vy -= (fy / p2.mass) * TIME_STEP
+
+        # If the planet is inside the black hole's event horizon, remove it
+        if distance_val <= p2.radius + p1.radius / 3:
+            planets.remove(p2)
+            if LOG_TOGGLE:
+                print(f"Planet sucked into black hole at ({p2.x}, {p2.y})")  # Debug info
+
         return
 
     if p2.black_hole:
         # If p2 is a black hole, it doesn't move, only p1 should be affected
-        # Resolve collision as if p2 is immovable
         dx = p1.x - p2.x
         dy = p1.y - p2.y
         distance_val = distance(p1, p2)
@@ -104,6 +110,13 @@ def resolve_collision(p1, p2):
         # Update the velocity of p1 based on gravity force
         p1.vx += (fx / p1.mass) * TIME_STEP
         p1.vy += (fy / p1.mass) * TIME_STEP
+
+        # If the planet is inside the black hole's event horizon, remove it
+        if distance_val <= p1.radius + p2.radius / 3:
+            planets.remove(p1)
+            if LOG_TOGGLE:
+                print(f"Planet sucked into black hole at ({p1.x}, {p1.y})")  # Debug info
+
         return
 
     # If neither is a black hole, proceed with normal collision handling (both planets move)
@@ -158,3 +171,4 @@ def resolve_collision(p1, p2):
 
     if impact_speed > 0:
         return  # No collision response needed if already moving apart
+

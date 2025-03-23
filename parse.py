@@ -113,11 +113,6 @@ def parse_build_file(file_path):
             elif line.startswith("sr(") and line.endswith(")"):
 
                 # Seeded random planet generation (sr())
-                if planets:  # If planets have already been added with p(), skip random
-
-                    logging.error("Cannot use seeded random planet generation (sr()) with planets added using p().")
-                    continue
-
                 try:
 
                     # Strip off 'sr(' and ')', then evaluate the content inside
@@ -210,8 +205,8 @@ def parse_build_file(file_path):
 
                             # Velocity assignment:
                             if random_velocity:
-                                vx = random.uniform(-0.3, 0.3)
-                                vy = random.uniform(-0.3, 0.3)
+                                vx = random.uniform(-0.6, 0.6)
+                                vy = random.uniform(-0.6, 0.6)
 
                             else:
                                 vx = vy = 0

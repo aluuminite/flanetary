@@ -6,7 +6,10 @@ from parse import parse_build_file
 from settings import SCREEN_WIDTH, SCREEN_HEIGHT, FPS, SCALE, WHITE, COLOR, TIME_STEP, G, LOG_TOGGLE, RGB_TOGGLE
 from planet import Planet
 from physics import apply_gravity, resolve_collision
-from utils import check_collision
+from utils import check_collision, distance
+
+CENTER_X = SCREEN_WIDTH / 2
+CENTER_Y = SCREEN_HEIGHT / 2
 
 # Parse the build.txt file and retrieve planet data
 planets_data = parse_build_file("build.txt")
@@ -25,13 +28,13 @@ paused_time = 0  # Track total time spent in pause mode
 pause_start_ticks = None  # Track when pause started
 
 # Initialize planets dynamically from the parsed build file
-planets = planets_data  # Simply use the already created Planet objects
+planets = planets_data
 
 
 paused = False  # Pause state
 
 # Initial color
-bg_color = list(COLOR)  # Convert tuple to list for easier modification
+bg_color = list(COLOR)  # Convert tuple to list
 
 running = True
 while running:
@@ -70,6 +73,36 @@ while running:
                 bg_color = [0, 0, 0]
                 print(f"Reset background color to black: {bg_color}")
 
+            if event.key == pygame.K_i:
+                # Set velocity of all planets inward towards the center, excluding black holes
+                for planet in planets:
+                    if not planet.black_hole:  # Skip black holes
+                        dx = CENTER_X - planet.x
+                        dy = CENTER_Y - planet.y
+                        dist = distance(planet,
+                                        Planet(CENTER_X, CENTER_Y, 0, None, 0, 0))  # Use the utils distance function
+
+                        if dist > 0:  # Prevent division by zero if distance is zero
+                            norm_dx = dx / dist
+                            norm_dy = dy / dist
+                            planet.vx = norm_dx * 11  # Adjust speed here as needed
+                            planet.vy = norm_dy * 11  # Adjust speed here as needed
+
+            elif event.key == pygame.K_o:
+                # Set velocity of all planets outward from the center, excluding black holes
+                for planet in planets:
+                    if not planet.black_hole:  # Skip black holes
+                        dx = planet.x - CENTER_X
+                        dy = planet.y - CENTER_Y
+                        dist = distance(planet,
+                                        Planet(CENTER_X, CENTER_Y, 0, None, 0, 0))  # Use the utils distance function
+
+                        if dist > 0:  # Prevent division by zero if distance is zero
+                            norm_dx = dx / dist
+                            norm_dy = dy / dist
+                            planet.vx = norm_dx * 11  # Adjust speed here as needed
+                            planet.vy = norm_dy * 11  # Adjust speed here as needed
+
     if not paused:
         # Check collisions and resolve them
         for i, p1 in enumerate(planets):
@@ -77,7 +110,7 @@ while running:
                 if i < j and check_collision(p1, p2):
                     if LOG_TOGGLE:
                         print(f"Collision detected between planet {i} and planet {j}!")
-                    resolve_collision(p1, p2)
+                    resolve_collision(p1, p2, planets)
 
         # Apply gravity between planets
         for i, p1 in enumerate(planets):
