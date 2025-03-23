@@ -79,10 +79,6 @@ def parse_build_file(file_path):
 
             elif line.startswith("r(") and line.endswith(")"):
                 # Random planet generation (r())
-                if planets:  # If planets have already been added with p(), skip random
-                    logging.error("Cannot use random planet generation (r()) with planets added using p().")
-                    continue
-
                 try:
                     data = eval(line[1:])  # Extract the tuple part after "r"
                     if len(data) == 3:

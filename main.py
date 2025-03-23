@@ -138,6 +138,11 @@ while running:
         rgb_text = font.render(f"RGB: {bg_color[0]}, {bg_color[1]}, {bg_color[2]}", True, WHITE)
         screen.blit(rgb_text, (10, 10))
 
+    if LOG_TOGGLE:
+        for planet in planets:
+            print(
+                f"Planet - Pos: ({planet.x:.2f}, {planet.y:.2f}) | Vel: ({planet.vx:.2f}, {planet.vy:.2f}) | Mass: {planet.mass} | Color: {planet.color}")
+
     pygame.display.flip()
     clock.tick(FPS)
 

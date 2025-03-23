@@ -48,17 +48,19 @@ class Planet:
             points = []
             num_segments = 50  # Smoothness
 
+            # Top part: inward curve (concave)
             for i in range(num_segments + 1):
                 angle = math.pi * (i / num_segments)
                 x_offset = math.cos(angle) * disk_half_width
-                y_offset = math.sin(angle) ** 2 * disk_thickness
-                points.append((self.x - x_offset, self.y - y_offset))
+                y_offset = -abs(math.sin(angle) ** 2) * disk_thickness  # Inward curve
+                points.append((self.x - x_offset, self.y + y_offset + 5))
 
+            # Bottom part: outward curve (convex)
             for i in range(num_segments + 1):
                 angle = math.pi * (1 - i / num_segments)
                 x_offset = math.cos(angle) * disk_half_width
-                y_offset = math.sin(angle) ** 2 * disk_thickness
-                points.append((self.x + x_offset, self.y + y_offset))
+                y_offset = math.sin(angle) ** 3.5 * disk_thickness  # Outward curve
+                points.append((self.x + x_offset, self.y + y_offset + 5))
 
             # Draw the animated accretion disk
             pygame.draw.polygon(screen, animated_color, points)
@@ -70,7 +72,7 @@ class Planet:
             screen.blit(mass_text, (int(self.x) - mass_text.get_width() // 2, int(self.y) - self.radius - 40))
 
         else:
-            # 🌍 Draw regular planets
+            # Draw regular planets
             pygame.draw.circle(screen, self.color, (int(self.x), int(self.y)), int(self.radius))
 
             # Labels for regular planets

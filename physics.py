@@ -80,7 +80,7 @@ def resolve_collision(p1, p2, planets):
         p2.vy -= (fy / p2.mass) * TIME_STEP
 
         # If the planet is inside the black hole's event horizon, remove it
-        if distance_val <= p2.radius + p1.radius / 3:
+        if distance_val <= p2.radius + p1.radius:
             planets.remove(p2)
             if LOG_TOGGLE:
                 print(f"Planet sucked into black hole at ({p2.x}, {p2.y})")  # Debug info
@@ -112,7 +112,7 @@ def resolve_collision(p1, p2, planets):
         p1.vy += (fy / p1.mass) * TIME_STEP
 
         # If the planet is inside the black hole's event horizon, remove it
-        if distance_val <= p1.radius + p2.radius / 3:
+        if distance_val <= p1.radius + p2.radius:
             planets.remove(p1)
             if LOG_TOGGLE:
                 print(f"Planet sucked into black hole at ({p1.x}, {p1.y})")  # Debug info
