@@ -1,7 +1,7 @@
 import os
 import logging
 from planet import Planet
-from settings import SCREEN_WIDTH, SCREEN_HEIGHT
+from settings import SCREEN_WIDTH, SCREEN_HEIGHT, BLACK_HOLE_COLOR
 
 # Settings path
 SETTINGS_FILE = "settings.py"
@@ -225,6 +225,17 @@ def parse_build_file(file_path):
 
                 except Exception as e:
                     logging.error(f"Invalid random seeded planet format: {line}. Error: {e}")
+
+            elif line.startswith("b(") and line.endswith(")"):
+                try:
+                    data = eval(line[1:])  # Extract the tuple part after "b"
+                    if len(data) == 3:
+                        x, y, mass = data
+                        planets.append(Planet(x, y, mass, BLACK_HOLE_COLOR, 0, 0, black_hole=True))
+                        logging.info(f"Added black hole: {data}")
+                except Exception as e:
+                    logging.error(f"Invalid black hole format: {line}. Error: {e}")
+
 
         # Update settings.py with new values
         update_settings_file(new_settings)
